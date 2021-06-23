@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">FB_midterm</string>
+    <string name="yemek">Yemek seciniz</string>
+    <string name="yemek_torbas">Yemek Torbası</string>
+    <string name="ac_s_z">Acısız</string>
+    <string name="listview_g_ster">LISTVIEW GöSTER</string>
+    <string name="foto_ek_m">FOTO ÇEKİM</string>
+    <string name="kap_ya_as">Kapıya as</string>
+    <string name="yemek_smi_giriniz">Yemek İsmi Giriniz</string>
+    <string name="r_n_olu_tur">ÜRÜN OLUŞTUR</string>
+    <string name="ac_l">Acılı</string>
+    <string name="yemek_olu_turma_sayfas">Yemek oluşturma Sayfası</string>
+    <string name="todo">TODO</string>
+
+    <string name="textnosuggestions">textNoSuggestions</string>
+    <string name="textview">TextView</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
