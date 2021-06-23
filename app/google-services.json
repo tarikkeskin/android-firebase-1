@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1034709243918",
+    "project_id": "finalexam-7c00a",
+    "storage_bucket": "finalexam-7c00a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034709243918:android:09d427006ef115a23d045f",
+        "android_client_info": {
+          "package_name": "com.tictactoe.fb_midterm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1034709243918-3uujreu7gdp486a294cj72vi3d1ss70a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDY94Oo70eg7-jcphUBTtPoZU2Yp4bJBsc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1034709243918-3uujreu7gdp486a294cj72vi3d1ss70a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

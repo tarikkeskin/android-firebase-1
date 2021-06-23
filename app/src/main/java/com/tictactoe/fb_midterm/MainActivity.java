@@ -8,12 +8,17 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,6 +29,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -50,6 +62,10 @@ public class MainActivity extends AppCompatActivity {
 
     //checkbox
     CheckBox FB_checkbox;
+
+    private Uri FB_imageUri;
+
+    private static  final int IMAGE_REQUEST = 2;
 
 
 
@@ -108,7 +124,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                askCameraPermission();
+                //askCameraPermission();
+                //uploadImage();
+                openImage();
 
             }
 
@@ -116,6 +134,61 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    private void openImage() {
+        Intent intent = new Intent();
+        intent.setType("image/");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent,IMAGE_REQUEST);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == IMAGE_REQUEST && resultCode == RESULT_OK){
+            FB_imageUri = data.getData();
+
+            uploadImage();
+        }
+    }
+
+    private String getFileExtention(Uri uri){
+        ContentResolver contentResolver = getContentResolver();
+
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+    }
+
+    private void uploadImage() {
+
+        final ProgressDialog pd = new ProgressDialog(this);
+        pd.setMessage("Uploading");
+        pd.show();
+
+        if(FB_imageUri != null){
+            StorageReference fileRef= FirebaseStorage.getInstance().getReference().child("uploads").child(System.currentTimeMillis() + "." + getFileExtention(FB_imageUri));
+
+            fileRef.putFile(FB_imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            String url = uri.toString();
+
+                            Log.d("Download url: ",url);
+                            pd.dismiss();
+                            Toast.makeText(MainActivity.this,"Image upload successfull",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        }
+
+    }
+
     private void askCameraPermission() {
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
@@ -143,14 +216,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(camera,102);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 102) {
-            FB_bitmapimage = (Bitmap) data.getExtras().get("data");
-            FB_image.setImageBitmap(FB_bitmapimage);
-        }
-    }
+
 
     public void goUrun(View view){
 
