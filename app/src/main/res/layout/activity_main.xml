@@ -81,6 +81,7 @@
             android:layout_weight="1"
             android:text="@string/foto_ek_m" />
 
+
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"

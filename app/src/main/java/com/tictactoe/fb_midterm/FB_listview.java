@@ -1,6 +1,10 @@
 package com.tictactoe.fb_midterm;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
@@ -10,59 +14,54 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class FB_listview extends AppCompatActivity {
 
-    ListView FB_listview;
-
-    int[] FB_images= {R.drawable.manti,
-    R.drawable.iskender,
-    R.drawable.kebab};
-
-    String[] FB_names = {"manti","iskender","kebab"};
-
-    int[] FB_fiyat={12,23,25};
+    RecyclerView rv;
+    List<ArticleList> articleLists;
+    DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_f_b_listview);
 
-        FB_listview = (ListView) findViewById(R.id.listView);
+        rv=findViewById(R.id.rec);
+        rv.setHasFixedSize(true);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        DividerItemDecoration decoration=new DividerItemDecoration(this,DividerItemDecoration.VERTICAL);
+        rv.addItemDecoration(decoration);
+        articleLists=new ArrayList<>();
+        databaseReference= FirebaseDatabase.getInstance().getReference("myImages");
+        getImageData();
 
-        CustomAdaptor customAdaptor =new CustomAdaptor();
-        FB_listview.setAdapter(customAdaptor);
+    }
+    private void getImageData() {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot di:dataSnapshot.getChildren()){
+                    ArticleList articleList=di.getValue(ArticleList.class);
+                    articleLists.add(articleList);
+                }
+                ArticleAdapter adapter=new ArticleAdapter(articleLists,getApplicationContext());
+                rv.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
-    class CustomAdaptor extends BaseAdapter{
 
-        @Override
-        public int getCount() {
-            return FB_images.length;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            View view = getLayoutInflater().inflate(R.layout.customlayout,null);
-
-            ImageView mImageView = view.findViewById(R.id.imageView3);
-
-            TextView mTextView = view.findViewById(R.id.textView);
-
-            mImageView.setImageResource(FB_images[position]);
-            mTextView.setText(FB_names[position]+FB_fiyat[position]);
-
-            return view;
-        }
-    }
 }
